@@ -1,51 +1,61 @@
 package com.carnaboard.Carnaboard.controller;
 
-import com.carnaboard.Carnaboard.model.Party;
-import com.carnaboard.Carnaboard.model.Usuario;
-import com.carnaboard.Carnaboard.model.UsuarioParty;
-import com.carnaboard.Carnaboard.service.PartyService;
-import com.carnaboard.Carnaboard.service.UsuarioPartyService;
-import com.carnaboard.Carnaboard.service.UsuarioService;
+import com.carnaboard.Carnaboard.dto.ParticipantePontuacaoResponse;
+import com.carnaboard.Carnaboard.model.Participante;
+import com.carnaboard.Carnaboard.service.ParticipanteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/usuario-party")
+@RequestMapping("/participantes")
 public class UsuarioPartyController {
 
-    private final UsuarioPartyService usuarioPartyService;
-    private final UsuarioService usuarioService;
-    private final PartyService partyService;
+    private final ParticipanteService participanteService;
 
     public UsuarioPartyController(
-            UsuarioPartyService usuarioPartyService,
-            UsuarioService usuarioService,
-            PartyService partyService
+            ParticipanteService participanteService
     ) {
-        this.usuarioPartyService = usuarioPartyService;
-        this.usuarioService = usuarioService;
-        this.partyService = partyService;
+        this.participanteService = participanteService;
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioParty> adicionarUsuarioNaParty(
+    public ResponseEntity<Participante> adicionarUsuarioNaParty(
             @RequestParam Long usuarioId,
             @RequestParam Long partyId,
             @RequestParam Integer pontos
     ) {
-        Usuario usuario = usuarioService.buscarPorId(usuarioId);
-        Party party = partyService.buscarPorId(partyId);
-        UsuarioParty relacao = usuarioPartyService.adicionarUsuarioNaParty(usuario, party, pontos);
+        Participante relacao = participanteService.adicionarUsuarioNaParty(usuarioId, partyId, pontos);
         return ResponseEntity.status(HttpStatus.CREATED).body(relacao);
     }
 
     @PutMapping("/{id}/pontuacao")
-    public ResponseEntity<UsuarioParty> atualizarPontuacao(
+    public ResponseEntity<Participante> atualizarPontuacao(
             @PathVariable Long id,
             @RequestParam Integer pontos
     ) {
-        UsuarioParty atualizado = usuarioPartyService.atualizarPontuacao(id, pontos);
+        Participante atualizado = participanteService.atualizarPontuacao(id, pontos);
         return ResponseEntity.ok(atualizado);
+    }
+
+    @GetMapping("/party/{partyId}/usuarios")
+    public ResponseEntity<List<ParticipantePontuacaoResponse>> listarUsuariosDaParty(@PathVariable Long partyId) {
+        List<Participante> relacoes = participanteService.listarPorParty(partyId);
+        List<ParticipantePontuacaoResponse> response = new ArrayList<>();
+        for (Participante relacao : relacoes) {
+            if (relacao.getUsuario() == null) {
+                continue;
+            }
+            response.add(new ParticipantePontuacaoResponse(
+                    relacao.getUsuario().getId(),
+                    relacao.getId(),
+                    relacao.getNome(),
+                    relacao.getPontuacao()
+            ));
+        }
+        return ResponseEntity.ok(response);
     }
 }

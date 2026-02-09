@@ -13,6 +13,11 @@ public class Party {
     private Long id;
     private String nome;
 
+    @Enumerated(EnumType.STRING)
+    private PartyStatus status;
+
+    private Long criadorId;
+
     public Long getId() {
         return id;
     }
@@ -27,5 +32,21 @@ public class Party {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public PartyStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PartyStatus status) {
+        this.status = status;
+    }
+
+    public Long getCriadorId() {
+        return criadorId;
+    }
+
+    public void setCriadorId(Long criadorId) {
+        this.criadorId = criadorId;
     }
 }

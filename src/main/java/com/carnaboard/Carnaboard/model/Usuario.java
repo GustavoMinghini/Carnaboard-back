@@ -11,8 +11,11 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
+    @Column(unique = true)
     private String login;
     private String senha;
+    @Lob
+    private String avatar;
 
 
     public String getLogin() {
@@ -29,6 +32,14 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Long getId() {

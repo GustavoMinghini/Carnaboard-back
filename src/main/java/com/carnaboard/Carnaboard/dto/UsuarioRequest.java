@@ -4,6 +4,7 @@ public class UsuarioRequest {
     private String nome;
     private String login;
     private String senha;
+    private String avatar;
 
     public String getNome() {
         return nome;
@@ -27,5 +28,13 @@ public class UsuarioRequest {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
